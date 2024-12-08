@@ -1,0 +1,4 @@
+name: finetune_llama
+channels:
+  - defaults
+prefix: /home/newuser/anaconda3/envs/finetune_llama
