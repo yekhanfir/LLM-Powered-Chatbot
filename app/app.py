@@ -40,5 +40,5 @@ def chat():
 
 if __name__ == "__main__":
     app.run()
-    fastapi_process = subprocess.Popen(["uvicorn", "app:app", "--reload"])
+    fastapi_process = subprocess.Popen(["uvicorn", "app:app", "--port", "8000", "--reload"])
     fastapi_process.wait()
