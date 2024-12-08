@@ -6,10 +6,12 @@ from transformers import (
 )
 from peft import LoraConfig, PeftModel
 from trl import SFTTrainer
+from huggingface_hub import login
 
 model_name = "meta-llama/Llama-3.2-1B"
 new_model = "/mnt/c/Users/y.khanfir/Finetuning_lllama/Llama-3.2-1B/checkpoint-3"
 device_map = {"": 0}
+login(token="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")
 
 base_model = AutoModelForCausalLM.from_pretrained(
     model_name,
