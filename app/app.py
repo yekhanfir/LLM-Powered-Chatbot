@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../trl')
 from flask import Flask, render_template, request
 import requests
 from datetime import datetime
@@ -27,8 +25,8 @@ def chat():
         conversation.append({"sender": "user", "text": raw_prompt, "date": timestamp})
 
         # Call FastAPI backend
-        response = "llm generated response" #generate_response(prompt_history)
-        bot_response = response['response']
+        # response = generate_response(prompt_history)
+        bot_response = "llm_ganerated_response" #response['response']
         prompt_history = prompt_history + bot_response.strip('</s>')
 
         # Add bot's response
@@ -40,5 +38,3 @@ def chat():
 
 if __name__ == "__main__":
     app.run()
-    fastapi_process = subprocess.Popen(["uvicorn", "app:app", "--port", "8000", "--reload"])
-    fastapi_process.wait()
