@@ -64,7 +64,7 @@ from trl import (
 
 
 if __name__ == "__main__":
-    login()
+    login(token="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")
     parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
     script_args, training_args, model_config = parser.parse_args_and_config()
 
