@@ -4,7 +4,7 @@ from flask import Flask, render_template, request
 import requests
 from datetime import datetime
 import subprocess
-from llama_inference import generate_response
+# from llama_inference import generate_response
 
 app = Flask(__name__)
 
@@ -27,7 +27,7 @@ def chat():
         conversation.append({"sender": "user", "text": raw_prompt, "date": timestamp})
 
         # Call FastAPI backend
-        response = generate_response(prompt_history)
+        response = "llm generated response" #generate_response(prompt_history)
         bot_response = response['response']
         prompt_history = prompt_history + bot_response.strip('</s>')
 
