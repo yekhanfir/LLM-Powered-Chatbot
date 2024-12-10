@@ -64,7 +64,7 @@ if __name__ == "__main__":
     tokenizer.pad_token = tokenizer.eos_token
 
     # Initialize dataset, format and filter dataset
-    dataset_dict = load_dataset(config['finetuning_config']['data_path'])
+    dataset_dict = load_dataset(config['training_config']['data_path'])
     dataset = Dataset.from_dict(dataset_dict)
     dataset = dataset.map(format_row)
     dataset = dataset.filter(filter_by_length)
