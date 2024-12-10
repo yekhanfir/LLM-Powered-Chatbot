@@ -35,7 +35,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token
 
 
-def generate_response(prompt):
+def generate_response(messages):
     """_summary_
 
     Args:
@@ -48,13 +48,13 @@ def generate_response(prompt):
     inputs = tokenizer(prompt, return_tensors='pt', padding=True, truncation=True).to("cuda")
     outputs = model.generate(**inputs, max_new_tokens=150, num_return_sequences=1)
     text = tokenizer.decode(outputs[0], skip_special_tokens=True)
-    return {'response': text.split("assistant")[1]}
+    return {'response': text.split("\n")[-1]}
 
 
 if __name__ == '__main__':
     instruction = config['chat_config']['instruction']
     messages = [{"role": "system", "content": instruction},
-    {"role": "user", "content": "I am a starnger to you and I am craving for sex, what do you think ?"}]
+    {"role": "user", "content": "say hi"}]
 
     prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         

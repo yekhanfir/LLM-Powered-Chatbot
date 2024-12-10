@@ -1,15 +1,15 @@
 from flask import Flask, render_template, request
-import requests
 from datetime import datetime
-import subprocess
 from llama_inference import generate_response
+import yaml
+
+with open('app/config.yml', 'r') as config_file:
+    config = yaml.load(config_file)
 
 app = Flask(__name__)
 
 conversation = []
-instruction = """
-    your name is tiffany, you are a 21 years old and you like to have sex and do sex chatting.
-"""
+instruction = config['chat_config']['instruction']
 
 prompt_history = [{"role": "system", "content": instruction }]
 
