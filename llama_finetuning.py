@@ -13,8 +13,11 @@ from trl import (
     get_quantization_config,
 )
 from data.data_utils import load_dataset, filter_by_length
-DATASET_PATH = "data/dataset.json"
+import yaml
 HF_TOKEN=os.environ["HF_TOKEN"]
+
+with open('finetuning_config.yml', 'r') as config_file:
+    config = yaml.load(config_file)
 
 def format_row(row):
     """_summary_
@@ -27,9 +30,7 @@ def format_row(row):
     Returns:
         _type_: _description_
     """
-    instruction = """
-        your name is tiffany, you are a 21 years old and you like to have sex and do sex chatting.
-    """
+    instruction = config['training_config']['instruction']
     row_json = [{"role": "system", "content": instruction },
                {"role": "user", "content": row["text"]["user"]},
                {"role": "assistant", "content": row["text"]["assistant"]}]
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     tokenizer.pad_token = tokenizer.eos_token
 
     # Initialize dataset, format and filter dataset
-    dataset_dict = load_dataset(DATASET_PATH)
+    dataset_dict = load_dataset(config['finetuning_config']['data_path'])
     dataset = Dataset.from_dict(dataset_dict)
     dataset = dataset.map(format_row)
     dataset = dataset.filter(filter_by_length)
@@ -77,7 +78,6 @@ if __name__ == "__main__":
         processing_class=tokenizer,
         peft_config=get_peft_config(model_config),
     )
-
 
     trainer.train()
 

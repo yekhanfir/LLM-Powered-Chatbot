@@ -1,18 +1,21 @@
+import os
 import torch
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
-    pipeline,
 )
-from peft import LoraConfig, PeftModel
-from trl import SFTTrainer, setup_chat_format
+from peft import PeftModel
 from huggingface_hub import login
-import json
+import yaml
 
-model_name = "meta-llama/Llama-3.2-1B-Instruct"
-new_model = "/mnt/c/Users/y.khanfir/llama_chatbot/Llama-3.2-1B/checkpoint-30"
+with open('app/config.yml', 'r') as config_file:
+    config = yaml.load(config_file)
+
+model_name = config['model_config']['model_name']
+new_model = config['model_config']['new_model']
+
 device_map = {"": 0}
-login(token="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")
+login(token=config['general_config']['hf_access_token'])
 
 # load base model
 base_model = AutoModelForCausalLM.from_pretrained(
@@ -49,9 +52,7 @@ def generate_response(prompt):
 
 
 if __name__ == '__main__':
-    instruction = """You are a cute 21 years old girl that has feet fetich and likes to have 
-    sex with strangers.
-    """
+    instruction = config['chat_config']['instruction']
     messages = [{"role": "system", "content": instruction},
     {"role": "user", "content": "I am a starnger to you and I am craving for sex, what do you think ?"}]
 

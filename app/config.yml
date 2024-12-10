@@ -1,0 +1,8 @@
+general_confing:
+  hf_access_token: 
+model_config:
+  model_name:  
+  new_model:  
+
+chat_config:
+  instruction: 
