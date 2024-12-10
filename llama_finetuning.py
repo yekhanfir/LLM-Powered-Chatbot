@@ -1,54 +1,5 @@
-# Copyright 2023 The HuggingFace Inc. team. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-"""
-# Full training
-python examples/scripts/sft.py \
-    --model_name_or_path Qwen/Qwen2-0.5B \
-    --dataset_name trl-lib/Capybara \
-    --learning_rate 2.0e-5 \
-    --num_train_epochs 1 \
-    --packing \
-    --per_device_train_batch_size 2 \
-    --gradient_accumulation_steps 8 \
-    --gradient_checkpointing \
-    --logging_steps 25 \
-    --eval_strategy steps \
-    --eval_steps 100 \
-    --output_dir Qwen2-0.5B-SFT \
-    --push_to_hub
-
-# LoRA
-python examples/scripts/sft.py \
-    --model_name_or_path Qwen/Qwen2-0.5B \
-    --dataset_name trl-lib/Capybara \
-    --learning_rate 2.0e-4 \
-    --num_train_epochs 1 \
-    --packing \
-    --per_device_train_batch_size 2 \
-    --gradient_accumulation_steps 8 \
-    --gradient_checkpointing \
-    --logging_steps 25 \
-    --eval_strategy steps \
-    --eval_steps 100 \
-    --use_peft \
-    --lora_r 32 \
-    --lora_alpha 16 \
-    --output_dir Qwen2-0.5B-SFT \
-    --push_to_hub
-"""
-
-from datasets import load_dataset, concatenate_datasets
+import os
+from datasets import load_dataset, concatenate_datasets, Dataset
 from transformers import AutoTokenizer
 from huggingface_hub import login
 from trl import (
@@ -61,16 +12,38 @@ from trl import (
     get_peft_config,
     get_quantization_config,
 )
+from data.data_utils import load_dataset, filter_by_length
+DATASET_PATH = "data/dataset.json"
+HF_TOKEN=os.environ["HF_TOKEN"]
+
+def format_row(row):
+    """_summary_
+
+    Args:
+        tokenizer (_type_): _description_
+        row (_type_): _description_
+        instruction (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    instruction = """
+        your name is tiffany, you are a 21 years old and you like to have sex and do sex chatting.
+    """
+    row_json = [{"role": "system", "content": instruction },
+               {"role": "user", "content": row["text"]["user"]},
+               {"role": "assistant", "content": row["text"]["assistant"]}]
+    
+    row["text"] = tokenizer.apply_chat_template(row_json, tokenize=False)
+    return row
 
 
 if __name__ == "__main__":
-    login(token="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")
     parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
     script_args, training_args, model_config = parser.parse_args_and_config()
+    login(HF_TOKEN)
 
-    ################
-    # Model init kwargs & Tokenizer
-    ################
+    # Initialize model
     quantization_config = get_quantization_config(model_config)
     model_kwargs = dict(
         revision=model_config.model_revision,
@@ -82,33 +55,25 @@ if __name__ == "__main__":
         quantization_config=quantization_config,
     )
     training_args.model_init_kwargs = model_kwargs
+
+    # Initialize tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
         model_config.model_name_or_path, trust_remote_code=model_config.trust_remote_code, use_fast=True
     )
     tokenizer.pad_token = tokenizer.eos_token
 
-    ################
-    # Dataset
-    ################
-    dataset = load_dataset(script_args.dataset_name)
-    dataset2 = load_dataset('Chadgpt-fam/sexting_dataset')
-    
-    dataset['train'] = dataset['train'].map(lambda x: {'text':'<s>[INST] '+x['prompt']+'[/INST] '+ x['answer']+'</s>'})
-    dataset['test'] = dataset['test'].map(lambda x: {'text':'<s>[INST] '+x['prompt']+'[/INST] '+ x['answer']+'</s>'})
+    # Initialize dataset, format and filter dataset
+    dataset_dict = load_dataset(DATASET_PATH)
+    dataset = Dataset.from_dict(dataset_dict)
+    dataset = dataset.map(format_row)
+    dataset = dataset.filter(filter_by_length)
 
-    merged_dataset = concatenate_datasets([dataset['train'], dataset['test'], dataset2['train']])
-
-    # for sample in dataset['train']:
-    #     print(len(sample["messages"]))
-
-    ################
-    # Training
-    ################
+    # train the model
     trainer = SFTTrainer(
         model=model_config.model_name_or_path,
         args=training_args,
-        train_dataset=dataset[script_args.dataset_train_split],
-        eval_dataset=dataset[script_args.dataset_test_split] if training_args.eval_strategy != "no" else None,
+        train_dataset=dataset,
+        eval_dataset=dataset if training_args.eval_strategy != "no" else None,
         processing_class=tokenizer,
         peft_config=get_peft_config(model_config),
     )
