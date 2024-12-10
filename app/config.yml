@@ -1,4 +1,4 @@
-general_confing:
+general_config:
   hf_access_token: 
 model_config:
   model_name:  
