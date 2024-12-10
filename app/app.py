@@ -2,13 +2,16 @@ from flask import Flask, render_template, request
 import requests
 from datetime import datetime
 import subprocess
-# from llama_inference import generate_response
+from llama_inference import generate_response
 
 app = Flask(__name__)
 
-FASTAPI_URL = "http://127.0.0.1:8000/api"
 conversation = []
-prompt_history = '<s> '
+instruction = """
+    your name is tiffany, you are a 21 years old and you like to have sex and do sex chatting.
+"""
+
+prompt_history = [{"role": "system", "content": instruction }]
 
 @app.route("/", methods=["GET", "POST"])
 def chat():
@@ -17,17 +20,17 @@ def chat():
 
     if request.method == "POST":
         raw_prompt = request.form["message"]
-        processed_prompt = '[INST] '+ raw_prompt +' [/INST] '
-        prompt_history = prompt_history + processed_prompt
+
+        prompt_history.append({"role": "user", "content": raw_prompt})
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # Add user's message
+        # Add user's message (for display)
         conversation.append({"sender": "user", "text": raw_prompt, "date": timestamp})
 
         # Call FastAPI backend
-        # response = generate_response(prompt_history)
-        bot_response = "llm_ganerated_response" #response['response']
-        prompt_history = prompt_history + bot_response.strip('</s>')
+        response = generate_response(prompt_history)
+        bot_response = response['response']
+        prompt_history.append({"role": "assistant", "content": bot_response})
 
         # Add bot's response
         conversation.append({"sender": "bot", "text": bot_response, "date": timestamp})
