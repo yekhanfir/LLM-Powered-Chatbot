@@ -1,4 +1,9 @@
 name: finetune_llama
 channels:
   - defaults
+dependencies:
+  - pip
+  - pip:
+    - -r file:app/requirements.txt
+    
 prefix: /home/newuser/anaconda3/envs/finetune_llama
