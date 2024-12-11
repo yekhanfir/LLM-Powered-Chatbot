@@ -1,1 +1,0 @@
-python trl/scripts/infer_new_model.py
