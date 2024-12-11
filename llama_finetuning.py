@@ -1,4 +1,3 @@
-import os
 from datasets import load_dataset, concatenate_datasets, Dataset
 from transformers import AutoTokenizer
 from huggingface_hub import login
@@ -14,6 +13,7 @@ from trl import (
 )
 from data.data_utils import load_dataset, filter_by_length
 import yaml
+import wandb
 
 with open('finetuning_config.yml', 'r') as config_file:
     config = yaml.load(config_file)
@@ -42,6 +42,13 @@ if __name__ == "__main__":
     parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
     script_args, training_args, model_config = parser.parse_args_and_config()
     login(config['general_config']['hf_token'])
+    wandb.login(key=config['general_config']['wandb_token'])
+
+    run = wandb.init(
+        project='Fine-tune Llama-3.2-1B-Instruct on Custom Dataset', 
+        job_type="finetuning",
+        anonymous="allow",
+    )
 
     # Initialize model
     quantization_config = get_quantization_config(model_config)
@@ -67,15 +74,13 @@ if __name__ == "__main__":
     dataset = Dataset.from_dict(dataset_dict)
     dataset = dataset.map(format_row)
     dataset = dataset.filter(filter_by_length)
-    print(len(dataset))
-    exit()
 
     # train the model
     trainer = SFTTrainer(
         model=model_config.model_name_or_path,
         args=training_args,
         train_dataset=dataset,
-        eval_dataset=dataset if training_args.eval_strategy != "no" else None,
+        eval_dataset= None,
         processing_class=tokenizer,
         peft_config=get_peft_config(model_config),
     )
