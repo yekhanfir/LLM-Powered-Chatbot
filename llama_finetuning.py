@@ -14,7 +14,6 @@ from trl import (
 )
 from data.data_utils import load_dataset, filter_by_length
 import yaml
-HF_TOKEN=os.environ["HF_TOKEN"]
 
 with open('finetuning_config.yml', 'r') as config_file:
     config = yaml.load(config_file)
@@ -42,7 +41,7 @@ def format_row(row):
 if __name__ == "__main__":
     parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
     script_args, training_args, model_config = parser.parse_args_and_config()
-    login(HF_TOKEN)
+    login(config['general_config']['hf_token'])
 
     # Initialize model
     quantization_config = get_quantization_config(model_config)
@@ -68,6 +67,8 @@ if __name__ == "__main__":
     dataset = Dataset.from_dict(dataset_dict)
     dataset = dataset.map(format_row)
     dataset = dataset.filter(filter_by_length)
+    print(len(dataset))
+    exit()
 
     # train the model
     trainer = SFTTrainer(
