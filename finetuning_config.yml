@@ -1,5 +1,6 @@
 general_config:
   hf_token: 
+  wandb_token: 
 training_config:
   data_path: 
   instruction: 
