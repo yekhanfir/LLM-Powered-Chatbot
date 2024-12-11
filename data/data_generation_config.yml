@@ -1,0 +1,3 @@
+dataset_config:
+  hf_dataset_names: # list of huggingface dataset names
+  output_path: 

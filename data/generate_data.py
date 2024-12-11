@@ -1,16 +1,20 @@
-import requests
 import json
 import pandas as pd
 from datasets import load_dataset
-import http.server
-import socketserver
-import os
+import yaml
 
-conversation_id = 1  # Start conversation numbering from (index_discussion = 1)
-transformed_dataset1 = {} # dataset 1 = Maxx0/sexting-nsfw-adultconten = 2156 lines (1 discussion)
-transformed_dataset2 = {} # dataset 2 = freQuensy23/sexting_prompts = 1076 (1 discussion)
-transformed_dataset3 = {} # dataset 3 = Chadgpt-fam/sexting_dataset =  1436 lines (10 discussions)
-transformed_dataset4 = {} # dataset 4 = SPACENOS/exbot-nsfw-sexting = 10212 (1 discussion)
+with open('data/data_generation_config.yml', 'r') as data_generation_config:
+    config = yaml.load(data_generation_config)
+
+hf_dataset_names = config['dataset_config']['hf_dataset_names']
+
+
+conversation_id = 1 
+transformer_datasets_list = []
+transformed_dataset1 = {} # (1 discussion)
+transformed_dataset2 = {} # (1 discussion)
+transformed_dataset3 = {} # (10 discussions)
+transformed_dataset4 = {} # (1 discussion)
 
 def transform_dataset1(dataset):
     global conversation_id
@@ -26,7 +30,7 @@ def transform_dataset1(dataset):
     conversation_id += 1
     return transformed_dataset1
 
-dataset1 = load_dataset("Maxx0/sexting-nsfw-adultconten", split="train")
+dataset1 = load_dataset(hf_dataset_names[0], split="train")
 df1 = pd.DataFrame(dataset1)
 transformed_dataset1 = transform_dataset1(df1)
 
@@ -49,7 +53,7 @@ def transform_dataset2(dataset):
     conversation_id += 1
     return transformed_dataset2
 
-dataset2 = load_dataset("freQuensy23/sexting_prompts", split="train")
+dataset2 = load_dataset(hf_dataset_names[1], split="train")
 df2 = pd.DataFrame(dataset2)
 transformed_dataset2 = transform_dataset2(df2)
 
@@ -79,7 +83,7 @@ def transform_dataset3(dataset):
         conversation_id += 1
     return transformed_dataset3
 
-dataset3 = load_dataset("Chadgpt-fam/sexting_dataset", split="train")
+dataset3 = load_dataset(hf_dataset_names[2], split="train")
 df3 = pd.DataFrame(dataset3)
 transformed_dataset3 = transform_dataset3(df3)
 
@@ -98,7 +102,7 @@ def transform_dataset4(dataset):
     conversation_id += 1
     return transformed_dataset4
 
-dataset4 = load_dataset("SPACENOS/exbot-nsfw-sexting", split="train")
+dataset4 = load_dataset(hf_dataset_names[3], split="train")
 df4 = pd.DataFrame(dataset4)
 transformed_dataset4 = transform_dataset4(df4)
 
@@ -129,11 +133,13 @@ def transform_dataset(data):
     return transformed_data
 
 
-final_json = json.dumps(transform_dataset(final_combined_dataset), indent=4)
-json_filename = "dataset.json"
+final_json = json.dumps(
+    transform_dataset(final_combined_dataset), 
+    indent=4
+)
 
 # Write the final result to a file
-with open(json_filename, "w") as f:
+with open(config["dataset_config"]["output_path"], "w") as f:
     f.write(final_json)
 
  
