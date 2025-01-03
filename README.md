@@ -63,6 +63,6 @@ This will start the chatbot server, typically accessible at `http://127.0.0.1:50
 
 * This project provides a script (`data/generate_data.py`) for generating chatbot training data from multiple Hugging Face datasets. 
 * Update `data/data_generation_config.yml` with your desired Hugging Face dataset names and output path.
-* Run `python data/generate_data.py` to generate the training data.
+* Update `python data/generate_data.py` to adapt the preprocessing to your chosen datasets.
 
 **Note:** This script is an example and might require modification depending on your specific datasets.
