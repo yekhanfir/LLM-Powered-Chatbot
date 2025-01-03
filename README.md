@@ -1,118 +1,69 @@
-LLama Chatbot with Fine-tuning
-A comprehensive solution for fine-tuning LLama models and deploying them as a chatbot. This project includes data preparation, model fine-tuning, and a web interface for interacting with the fine-tuned model.
-🌟 Features
+## llama_chatbot Documentation
 
-Data preparation pipeline supporting multiple dataset formats
-Fine-tuning pipeline for LLama models using PEFT/LoRA
-Flask-based web interface for chatbot interaction
-Support for custom instructions and model configurations
-Wandb integration for training monitoring
-CUDA-optimized inference
+This repository contains the code for a chatbot powered by the Llama large language model. 
 
-📋 Prerequisites
+### Functionality
 
-Python 3.8+
-CUDA-compatible GPU
-Anaconda/Miniconda
-Hugging Face account with access token
-Weights & Biases account (for training monitoring)
+The chatbot takes user input and generates a response using a fine-tuned Llama model.
 
-🔧 Installation
+### Here's a breakdown of the repository structure:
 
-Clone the repository:
-
-bashCopygit clone [repository-url]
-cd llama_chatbot
-
-Create and activate the conda environment:
-
-bashCopyconda env create -f environment.yml
-conda activate finetune_llama
-
-Configure the application:
-
-Copy and fill in the configuration files:
-
-finetuning_config.yml (for model fine-tuning)
-app/config.yml (for chatbot deployment)
-data/data_generation_config.yml (for data preparation)
+* **README.md (current file):** Provides an overview of the project.
+* **environment.yml:** Defines the conda environment used for running the project.
+* **finetuning_config.yml:** Configuration file for fine-tuning the Llama model.
+* **launch_llama_finetuning.sh:** Script to launch Llama fine-tuning.
+* **llama_finetuning.py:** Script that performs Llama fine-tuning.
+* **app/app.py:** Flask application that serves the chatbot interface.
+* **app/config.yml:** Configuration file for the Flask application.
+* **app/llama_inference.py:** Script that handles user input and generates chatbot responses using the fine-tuned Llama model.
+* **app/requirements.txt:** Lists the Python dependencies required for the Flask application.
+* **data/data_generation_config.yml:** Configuration for generating chatbot training data.
+* **data/data_utils.py:** Utility functions for data processing.
+* **data/generate_data.py:** Script that generates chatbot training data from multiple sources.
 
 
+### Setting Up the Environment:
 
+1.  **Create a conda environment**:
+    ```bash
+    conda env create -f environment.yml
+    ```
+2.  **Activate the environment**:
+    ```bash
+    conda activate finetune_llama
+    ```
 
+### Fine-tuning the Llama Model:
 
-📊 Data Preparation
+1.  **Update `finetuning_config.yml`**:
+    *  Fill in the following fields:
+        * `hf_token`: Your Hugging Face Access Token
+        * `wandb_token`: Your Weights & Biases API Key (optional)
+        * `data_path`: Path to your chatbot training data (JSON format)
+        * `instruction`: Starting instruction for the chatbot conversation.
+2.  **Run the fine-tuning script**:
+    ```bash
+    bash launch_llama_finetuning.sh
+    ```
 
-Configure your dataset sources in data/data_generation_config.yml:
+### Running the Chatbot Application:
 
-yamlCopydataset_config:
-  hf_dataset_names: # Add your Hugging Face dataset names
-  output_path: # Specify output path for processed data
+1.  **Update `app/config.yml`**:
+    *  Fill in the following fields:
+        * `hf_access_token`: Your Hugging Face Access Token
+        * `model_config.model_name`: Name of the fine-tuned Llama model (should be the output directory from fine-tuning)
+        * `chat_config.instruction`: Starting instruction for the chatbot conversation.
+2.  **Run the Flask application**:
+    ```bash
+    python app/app.py
+    ```
 
-Run the data generation script:
+This will start the chatbot server, typically accessible at `http://127.0.0.1:5000/` in your web browser.
 
-bashCopypython data/generate_data.py
-🚀 Fine-tuning
+### Generating Training Data:
 
-Configure the fine-tuning parameters in finetuning_config.yml:
+* This project provides a script (`data/generate_data.py`) for generating chatbot training data from multiple Hugging Face datasets. 
+* Update `data/data_generation_config.yml` with your desired Hugging Face dataset names and output path.
+* Run `python data/generate_data.py` to generate the training data.
 
-yamlCopygeneral_config:
-  hf_token: # Your Hugging Face token
-  wandb_token: # Your Weights & Biases token
-training_config:
-  data_path: # Path to your processed data
-  instruction: # System instruction for the model
-
-Launch the fine-tuning process:
-
-bashCopybash launch_llama_finetuning.sh
-Fine-tuning parameters can be adjusted in launch_llama_finetuning.sh. Current configuration:
-
-Base model: meta-llama/Llama-3.2-1B-instruct
-Learning rate: 2.0e-4
-Training epochs: 10
-Batch size: 2
-LoRA configuration: r=32, alpha=16
-
-💬 Chatbot Deployment
-
-Configure the chatbot in app/config.yml:
-
-yamlCopygeneral_config:
-  hf_access_token: # Your Hugging Face token
-model_config:
-  model_name: # Base model name
-  new_model: # Path to fine-tuned model
-chat_config:
-  instruction: # System instruction for chat
-
-Run the Flask application:
-
-bashCopycd app
-python app.py
-The chatbot will be available at http://localhost:5000.
-🏗️ Project Structure
-Copy.
-├── app/
-│   ├── app.py              # Flask web application
-│   ├── llama_inference.py  # Model inference logic
-│   ├── config.yml         # Chatbot configuration
-│   └── requirements.txt   # Python dependencies
-├── data/
-│   ├── generate_data.py   # Data processing script
-│   └── data_utils.py      # Data utility functions
-├── environment.yml        # Conda environment specification
-├── finetuning_config.yml  # Fine-tuning configuration
-├── launch_llama_finetuning.sh  # Training launch script
-└── llama_finetuning.py   # Fine-tuning implementation
-📝 Notes
-
-The application uses PEFT/LoRA for efficient fine-tuning
-Training progress can be monitored through Weights & Biases
-Maximum sequence length is set to 1024 tokens
-Response generation is limited to 150 tokens
-
-🔒 Security
-Remember to keep your configuration files and tokens secure. Never commit them to version control.
-📄 License
-[Add your license information here]
+**Note:** This script is an example and might require modification depending on your specific datasets.
