@@ -10,8 +10,8 @@ The chatbot takes user input and generates a response using a fine-tuned Llama m
 
 * **environment.yml:** Defines the conda environment used for running the project.
 * **finetuning_config.yml:** Configuration file for fine-tuning the Llama model.
-* **launch_llama_finetuning.sh:** Script to launch Llama fine-tuning.
-* **llama_finetuning.py:** Script that performs Llama fine-tuning.
+* **launch_llama_finetuning.sh:** Bash script to launch Llama fine-tuning.
+* **llama_finetuning.py:** Python script that performs Llama fine-tuning.
 * **app/app.py:** Flask application that serves the chatbot interface.
 * **app/config.yml:** Configuration file for the Flask application.
 * **app/llama_inference.py:** Script that handles user input and generates chatbot responses using the fine-tuned Llama model.
