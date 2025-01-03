@@ -8,7 +8,6 @@ The chatbot takes user input and generates a response using a fine-tuned Llama m
 
 ### Here's a breakdown of the repository structure:
 
-* **README.md (current file):** Provides an overview of the project.
 * **environment.yml:** Defines the conda environment used for running the project.
 * **finetuning_config.yml:** Configuration file for fine-tuning the Llama model.
 * **launch_llama_finetuning.sh:** Script to launch Llama fine-tuning.
