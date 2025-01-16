@@ -1,12 +1,12 @@
-## llama_chatbot Documentation
+# llama_chatbot Documentation
 
 This repository contains the code for a chatbot powered by the Llama large language model. 
 
-### Functionality
+# Functionality
 
 The chatbot takes user input and generates a response using a fine-tuned Llama model.
 
-### Here's a breakdown of the repository structure:
+# Here's a breakdown of the repository structure:
 
 * **environment.yml:** Defines the conda environment used for running the project.
 * **finetuning_config.yml:** Configuration file for fine-tuning the Llama model.
@@ -21,7 +21,7 @@ The chatbot takes user input and generates a response using a fine-tuned Llama m
 * **data/generate_data.py:** Script that generates chatbot training data from multiple sources.
 
 
-### Setting Up the Environment:
+# Setting Up the Environment:
 
 1.  **Create a conda environment**:
     ```bash
@@ -32,7 +32,7 @@ The chatbot takes user input and generates a response using a fine-tuned Llama m
     conda activate finetune_llama
     ```
 
-### Fine-tuning the Llama Model:
+# Fine-tuning the Llama Model:
 
 1.  **Update `finetuning_config.yml`**:
     *  Fill in the following fields:
@@ -45,7 +45,7 @@ The chatbot takes user input and generates a response using a fine-tuned Llama m
     bash launch_llama_finetuning.sh
     ```
 
-### Running the Chatbot Application:
+# Running the Chatbot Application:
 
 1.  **Update `app/config.yml`**:
     *  Fill in the following fields:
@@ -59,7 +59,7 @@ The chatbot takes user input and generates a response using a fine-tuned Llama m
 
 This will start the chatbot server, typically accessible at `http://127.0.0.1:5000/` in your web browser.
 
-### Generating Training Data:
+# Generating Training Data:
 
 * This project provides a script (`data/generate_data.py`) for generating chatbot training data from multiple Hugging Face datasets. 
 * Update `data/data_generation_config.yml` with your desired Hugging Face dataset names and output path.
