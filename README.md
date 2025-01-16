@@ -1,6 +1,6 @@
 # LLM Powered Chatbot Web App Documentation
 
-This repository contains the code for a chatbot powered by the Llama large language model. 
+This repository contains the code for a chatbot powered by the Llama large language model, but you can choose any open-source source LLM, and specialize it to your data, conversational style, etc ... 
 
 # Functionality
 
