@@ -1,4 +1,4 @@
-# llama_chatbot Documentation
+# LLM Powered Chatbot Web App Documentation
 
 This repository contains the code for a chatbot powered by the Llama large language model. 
 
